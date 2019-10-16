@@ -11,11 +11,11 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
+import seedu.address.model.person.AutoExpense;
 import seedu.address.model.person.Entry;
 import seedu.address.model.person.Expense;
 import seedu.address.model.person.Income;
 import seedu.address.model.person.Wish;
-
 
 /**
  * Represents the in-memory model of the address book data.
@@ -29,6 +29,7 @@ public class ModelManager implements Model {
     private final FilteredList<Expense> filteredExpenses;
     private final FilteredList<Income> filteredIncomes;
     private final FilteredList<Wish> filteredWishes;
+    private final FilteredList<AutoExpense> filteredAutoExpenses;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -45,13 +46,15 @@ public class ModelManager implements Model {
         filteredExpenses = new FilteredList<>(this.addressBook.getExpenseList());
         filteredIncomes = new FilteredList<>(this.addressBook.getIncomeList());
         filteredWishes = new FilteredList<>(this.addressBook.getWishList());
+        filteredAutoExpenses = new FilteredList<>(this.addressBook.getAutoExpenseList());
     }
 
     public ModelManager() {
         this(new AddressBook(), new UserPrefs());
     }
 
-    //=========== UserPrefs ==================================================================================
+    // =========== UserPrefs
+    // ==================================================================================
 
     @Override
     public void setUserPrefs(ReadOnlyUserPrefs userPrefs) {
@@ -86,7 +89,8 @@ public class ModelManager implements Model {
         userPrefs.setAddressBookFilePath(addressBookFilePath);
     }
 
-    //=========== AddressBook ================================================================================
+    // =========== AddressBook
+    // ================================================================================
 
     @Override
     public void setAddressBook(ReadOnlyAddressBook addressBook) {
@@ -135,6 +139,12 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public void deleteAutoExpense(AutoExpense target) {
+        addressBook.removeEntry(target);
+        addressBook.removeAutoExpense(target);
+    }
+
+    @Override
     public void addEntry(Entry entry) {
         addressBook.addEntry(entry);
         if (entry instanceof Expense) {
@@ -166,6 +176,12 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public void addAutoExpense(AutoExpense autoExpense) {
+        addressBook.addAutoExpense(autoExpense);
+        updateFilteredEntryList(PREDICATE_SHOW_ALL_ENTRIES);
+    }
+
+    @Override
     public void setEntry(Entry target, Entry editedEntry) {
         requireAllNonNull(target, editedEntry);
         addressBook.setEntry(target, editedEntry);
@@ -178,11 +194,12 @@ public class ModelManager implements Model {
         }
     }
 
-    //=========== Filtered Person List Accessors =============================================================
+    // =========== Filtered Person List Accessors
+    // =============================================================
 
     /**
-     * Returns an unmodifiable view of the list of {@code Entry} backed by the internal list of
-     * {@code versionedAddressBook}
+     * Returns an unmodifiable view of the list of {@code Entry} backed by the
+     * internal list of {@code versionedAddressBook}
      */
     @Override
     public ObservableList<Entry> getFilteredEntryList() {
@@ -202,6 +219,11 @@ public class ModelManager implements Model {
     @Override
     public ObservableList<Wish> getFilteredWishes() {
         return filteredWishes;
+    }
+
+    @Override
+    public ObservableList<AutoExpense> getFilteredAutoExpenses() {
+        return filteredAutoExpenses;
     }
 
     @Override
@@ -229,6 +251,12 @@ public class ModelManager implements Model {
     }
 
     @Override
+    public void updateFilteredAutoExpenses(Predicate<AutoExpense> predicate) {
+        requireNonNull(predicate);
+        filteredAutoExpenses.setPredicate(predicate);
+    }
+
+    @Override
     public boolean equals(Object obj) {
         // short circuit if same object
         if (obj == this) {
@@ -242,8 +270,7 @@ public class ModelManager implements Model {
 
         // state check
         ModelManager other = (ModelManager) obj;
-        return addressBook.equals(other.addressBook)
-                && userPrefs.equals(other.userPrefs)
+        return addressBook.equals(other.addressBook) && userPrefs.equals(other.userPrefs)
                 && filteredEntries.equals(other.filteredEntries);
     }
 
