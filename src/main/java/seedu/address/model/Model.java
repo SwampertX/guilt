@@ -8,6 +8,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.model.person.AutoExpense;
 import seedu.address.model.person.Entry;
 import seedu.address.model.person.Expense;
+import seedu.address.model.person.ExpenseReminder;
 import seedu.address.model.person.Income;
 import seedu.address.model.person.Wish;
 
@@ -25,6 +26,8 @@ public interface Model {
     Predicate<Wish> PREDICATE_SHOW_ALL_WISHES = unused -> true;
 
     Predicate<AutoExpense> PREDICATE_SHOW_ALL_AUTOEXPENSES = unused -> true;
+
+    Predicate<ExpenseReminder> PREDICATE_SHOW_ALL_EXPENSE_REMINDERS = unused -> true;
 
     /**
      * Replaces user prefs data with the data in {@code userPrefs}.
@@ -70,6 +73,8 @@ public interface Model {
      */
     boolean hasEntry(Entry entry);
 
+    boolean hasExpenseReminder(ExpenseReminder reminder);
+
     /**
      * Deletes the given entry. The entry must exist in the address book.
      */
@@ -90,6 +95,8 @@ public interface Model {
      */
     void deleteWish(Wish target);
 
+    void deleteExpenseReminder(ExpenseReminder target);
+
     /**
      * Deletes the given AutoExpense. The entry must exist in the address book.
      */
@@ -101,13 +108,15 @@ public interface Model {
      */
     void addEntry(Entry entry);
 
-    public void addExpense(Expense expense);
+    void addExpense(Expense expense);
 
-    public void addIncome(Income income);
+    void addIncome(Income income);
 
-    public void addWish(Wish wish);
+    void addWish(Wish wish);
 
-    public void addAutoExpense(AutoExpense autoExpense);
+    void addAutoExpense(AutoExpense autoExpense);
+
+    void addExpenseReminder(ExpenseReminder expenseReminder);
 
     /**
      * Replaces the given entry {@code target} with {@code editedEntry}.
@@ -116,6 +125,8 @@ public interface Model {
      * address book.
      */
     void setEntry(Entry target, Entry editedEntry);
+
+    void setExpenseReminder(ExpenseReminder target, ExpenseReminder editedEntry);
 
     /** Returns an unmodifiable view of the filtered entry list */
     ObservableList<Entry> getFilteredEntryList();
@@ -132,6 +143,8 @@ public interface Model {
     /** Returns an unmodifiable view of the filtered expenditure list */
     ObservableList<AutoExpense> getFilteredAutoExpenses();
 
+    ObservableList<ExpenseReminder> getFilteredExpenseReminders();
+
     /**
      * Updates the filter of the filtered entry list to filter by the given
      * {@code predicate}.
@@ -147,4 +160,6 @@ public interface Model {
     void updateFilteredWishes(Predicate<Wish> predicate);
 
     void updateFilteredAutoExpenses(Predicate<AutoExpense> predicate);
+
+    public void updateFilteredExpenseReminders(Predicate<ExpenseReminder> predicate);
 }
