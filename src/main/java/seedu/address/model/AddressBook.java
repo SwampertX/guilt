@@ -139,8 +139,9 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
-     * Adds a specified Expense to the finance app. * @param expense the specified
-     * Expense to be added.
+     * Adds a specified Expense to the finance app.
+     *
+     * * @param expense the specified Expense to be added.
      */
     public void addExpense(Expense expense) {
         entries.add(expense);
