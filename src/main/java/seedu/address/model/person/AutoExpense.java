@@ -17,7 +17,7 @@ public class AutoExpense extends Entry {
     // TODO: freq as an enum or a class:
     // monthly, weekly, daily, fortnightly
     public AutoExpense(Description desc, Amount amount, Set<Tag> tags, String freq) {
-        super(desc, amount, tags);
+        super(desc, new Time("stub time"), amount, tags);
         this.lastTime = new Time("right now lmao");
         this.freq = freq;
     }

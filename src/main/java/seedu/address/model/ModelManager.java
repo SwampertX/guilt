@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.person.AutoExpense;
@@ -17,14 +18,18 @@ import seedu.address.model.person.Expense;
 import seedu.address.model.person.ExpenseReminder;
 import seedu.address.model.person.ExpenseTrackerManager;
 import seedu.address.model.person.Income;
+import seedu.address.model.person.SortSequence;
+import seedu.address.model.person.SortType;
 import seedu.address.model.person.Wish;
+import seedu.address.model.util.EntryComparator;
 
 /**
  * Represents the in-memory model of the address book data.
  */
 public class ModelManager implements Model {
     private static final Logger logger = LogsCenter.getLogger(ModelManager.class);
-
+    private final SortType sortByDescription = new SortType("description");
+    private final SortSequence sortByAsc = new SortSequence("ascending");
     private final AddressBook addressBook;
     private final UserPrefs userPrefs;
     private final FilteredList<Entry> filteredEntries;
@@ -32,6 +37,7 @@ public class ModelManager implements Model {
     private final FilteredList<Income> filteredIncomes;
     private final FilteredList<Wish> filteredWishes;
     private final FilteredList<AutoExpense> filteredAutoExpenses;
+    private final SortedList<Entry> sortedEntryList;
     private final FilteredList<ExpenseReminder> filteredExpenseReminders;
     private final ExpenseTrackerManager expenseTrackers;
 
@@ -46,11 +52,13 @@ public class ModelManager implements Model {
 
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
-        filteredEntries = new FilteredList<>(this.addressBook.getEntryList());
         filteredExpenses = new FilteredList<>(this.addressBook.getExpenseList());
         filteredIncomes = new FilteredList<>(this.addressBook.getIncomeList());
         filteredWishes = new FilteredList<>(this.addressBook.getWishList());
         filteredAutoExpenses = new FilteredList<>(this.addressBook.getAutoExpenseList());
+        sortedEntryList = new SortedList<>(this.addressBook.getEntryList());
+        sortedEntryList.setComparator(new EntryComparator(sortByDescription, sortByAsc));
+        filteredEntries = new FilteredList<>(sortedEntryList);
         filteredExpenseReminders = new FilteredList<>(this.addressBook.getExpenseReminderList());
         expenseTrackers = new ExpenseTrackerManager(this.addressBook.getExpenseTrackerList());
     }
@@ -176,12 +184,14 @@ public class ModelManager implements Model {
         } else if (entry instanceof Wish) {
             addressBook.addWish((Wish) entry);
         }
+        sortFilteredEntry(sortByDescription, sortByAsc);
         updateFilteredEntryList(PREDICATE_SHOW_ALL_ENTRIES);
     }
 
     @Override
     public void addExpense(Expense expense) {
         addressBook.addExpense(expense);
+        sortFilteredEntry(sortByDescription, sortByAsc);
         updateFilteredEntryList(PREDICATE_SHOW_ALL_ENTRIES);
         expenseTrackers.track(filteredExpenses);
         addressBook.updateExpenseReminders();
@@ -190,12 +200,14 @@ public class ModelManager implements Model {
     @Override
     public void addIncome(Income income) {
         addressBook.addIncome(income);
+        sortFilteredEntry(sortByDescription, sortByAsc);
         updateFilteredEntryList(PREDICATE_SHOW_ALL_ENTRIES);
     }
 
     @Override
     public void addWish(Wish wish) {
         addressBook.addWish(wish);
+        sortFilteredEntry(sortByDescription, sortByAsc);
         updateFilteredEntryList(PREDICATE_SHOW_ALL_ENTRIES);
     }
 
@@ -275,6 +287,11 @@ public class ModelManager implements Model {
     public void updateFilteredEntryList(Predicate<Entry> predicate) {
         requireNonNull(predicate);
         filteredEntries.setPredicate(predicate);
+    }
+
+    @Override
+    public void sortFilteredEntry(SortType c, SortSequence sequence) {
+        sortedEntryList.setComparator(new EntryComparator(c, sequence));
     }
 
     @Override

@@ -10,6 +10,8 @@ import seedu.address.model.person.Entry;
 import seedu.address.model.person.Expense;
 import seedu.address.model.person.ExpenseReminder;
 import seedu.address.model.person.Income;
+import seedu.address.model.person.SortSequence;
+import seedu.address.model.person.SortType;
 import seedu.address.model.person.Wish;
 
 /**
@@ -161,5 +163,7 @@ public interface Model {
 
     void updateFilteredAutoExpenses(Predicate<AutoExpense> predicate);
 
-    public void updateFilteredExpenseReminders(Predicate<ExpenseReminder> predicate);
+    void sortFilteredEntry(SortType comparator, SortSequence sequence);
+
+    void updateFilteredExpenseReminders(Predicate<ExpenseReminder> predicate);
 }
