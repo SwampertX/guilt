@@ -205,6 +205,7 @@ public class ModelManager implements Model {
         updateFilteredEntryList(PREDICATE_SHOW_ALL_ENTRIES);
     }
 
+    @Override
     public void addExpenseReminder(ExpenseReminder expenseReminder) {
         addressBook.addExpenseReminder(expenseReminder);
         expenseTrackers.track(filteredExpenses);
@@ -226,7 +227,6 @@ public class ModelManager implements Model {
         }
     }
 
-
     @Override
     public void setExpenseReminder(ExpenseReminder target, ExpenseReminder editedEntry) {
         requireAllNonNull(target, editedEntry);
@@ -235,7 +235,8 @@ public class ModelManager implements Model {
         addressBook.updateExpenseReminders();
     }
 
-    //=========== Filtered Person List Accessors =============================================================
+    // =========== Filtered Person List Accessors
+    // =============================================================
 
     /**
      * Returns an unmodifiable view of the list of {@code Entry} backed by the
@@ -300,6 +301,7 @@ public class ModelManager implements Model {
         filteredAutoExpenses.setPredicate(predicate);
     }
 
+    @Override
     public void updateFilteredExpenseReminders(Predicate<ExpenseReminder> predicate) {
         requireNonNull(predicate);
         filteredExpenseReminders.setPredicate(predicate);
