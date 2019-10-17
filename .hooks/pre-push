@@ -18,16 +18,8 @@
 #
 # This sample shows how to prevent push of commits where the log message starts
 # with "WIP" (work in progress).
-
-echo "[1/2] Running checkstyle..." &&
+echo "[1/1] Running checkstyle..." &&
 # run checkstyle
 ./config/travis/run-checks.sh &&
 ./gradlew clean checkstyleMain checkstyleTest test coverage coveralls asciidoctor &&
-echo "[1/2] Checkstyle completed." &&
-
-echo "[2/2] Updating from upstream..." &&
-CURR_BRANCH=$(git rev-parse --abbrev-ref HEAD) &&
-git fetch upstream &&
-git checkout master && git merge upstream/master &&
-git checkout $CURR_BRANCH && git rebase master &&
-echo "[2/2] Update completed."
+echo "[1/1] Checkstyle completed."
