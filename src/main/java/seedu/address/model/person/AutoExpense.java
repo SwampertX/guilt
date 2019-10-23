@@ -14,8 +14,8 @@ public class AutoExpense extends Entry {
     private final Date lastTime;
     private final Frequency freq;
 
-    public AutoExpense(Description desc, Amount amount, Set<Tag> tags, Frequency freq) {
-        super(desc, Date.now(), amount, tags);
+    public AutoExpense(Description desc, Amount amount, Set<Tag> tags, Frequency freq, Date date) {
+        super(desc, date, amount, tags);
         this.lastTime = this.getDate();
         this.freq = freq;
     }
