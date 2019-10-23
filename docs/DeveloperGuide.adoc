@@ -31,6 +31,12 @@ Refer to the guide <<SettingUp#, here>>.
 [[Design-Architecture]]
 === Architecture
 
+The architecture remained largely the same, differing only in the way Model
+is implemented. Instead of list of persons, the model now transmit data created by
+multiple classes into the storage, instead of just one.
+
+Such classes include Entry and others.
+
 .Architecture Diagram
 image::ArchitectureDiagram.png[]
 
