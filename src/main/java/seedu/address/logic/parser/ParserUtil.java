@@ -93,6 +93,7 @@ public class ParserUtil {
 
     /**
      * Parses a time in String to ArrayList.
+     *
      * @param period the time as a String.
      * @return the specified time as Date.
      */
