@@ -225,6 +225,55 @@ Cons: Might not be as OOP as other designs.
 
 === ChangeFontCommand
 
+=== AutoExpenses
+==== Implementation
+AutoExpenses will create expenses automatically once created. This update is done during
+every startup, when model manager is being initialized.
+
+image::AutoExpenseSequenceDiagram.png[]
+
+`AutoExpense` extends the Entry class, but has special attributes of its own:
+
+. `lastTime` which keeps track of the date of last Expense generated
+. Uses `Date` attribute to keep track the creation date of this object
+. `Frequency` enum which keeps track of the frequency of the `AutoExpense`.
+
+The only state-changing, outfacing method is `generateNewExpenses()`, which will
+not only return a `List` of `Expenses` since `lastTime`, but also update the `lastTime`
+attribute to match the latest `Expense` in the list returned.
+
+The following activity diagram summarizes what happens when user creates a new AutoExpense:
+
+image::AutoExpenseCreationActivityDiagram.png[]
+
+==== Design Considerations
+.Aspect: How to encode the recurring nature of AutoExpense
+* *Alternative 1*: Embrace the good practice of immutable objects and
+    create a new AutoExpense object every time a new Expense is generated
+
+** Pros: Easier to prevent duplicate Expense generation since state is not changed.
+** Cons: Space intensive, also not necessary to recreate as only one field change (`lastTime`)
+
+* *Alternative 2: (currently implemented)*
+    Keep track of the state using an attribute `lastTime`, and change the state of the
+    `AutoExpense` object every update.
+
+** Pros: Easier to implement, and more space-friendly.
+** Cons: State changes are not saved or recorded in anyway.
+
+.Aspect: How to update AutoExpenses to generate new Expense objects
+* *Alternative 1:*: Use a thread to check every now and then, preferable every minute
+    for consistent updates.
+** Pros: Reliable and more orthodox way of checking for updates.
+** Cons: Hard to implement. Not sure how to debug.
+
+* *Alternative 2: (currently implemented)*
+    Update at every startup only.
+** Pros: Resource efficient. We take advantage of the assumption that
+***         Users will usually open the app for no longer than a day.
+***         The highest frequency an AutoExpense can be is currently *daily*.
+** Cons: Above assumptions have to be true.
+
 === Reminders
 
 ==== Implementation
