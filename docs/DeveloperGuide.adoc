@@ -225,8 +225,57 @@ Cons: Might not be as OOP as other designs.
 
 === ChangeFontCommand
 
-=== AutoExpenses
-==== Implementation
+=== Quality of Life features
+
+==== AutoSuggester
+===== Implementation
+AutoSuggester is one of the most visible and widely used UX feature in the GuiltTrip application.
+It grabs users' input from the command box using a listener,
+and returns suggetions using a `CommandSuggester` 's `suggest()` method, displayed in the `ResultDisplay` panel.
+
+Currently AutoSuggester carries out two functions:
+
+1. suggesting full commands when halfway typing any command
+1. displaying help messages when a complete command is detected.
+
+While a user is typing out commands, AutoSuggester will provide recommendation to the
+nearest valid command. For example, typing out `add` will suggest `addIncome`, `addExpense`,
+`help` etc, based on the matching algorithm used. Currently, an edit distance metric based
+on `edit, delete and inserting letters` is used, as implemented by the `EditDistanceComparator` class.
+
+Upon typing out any valid command in full, AutoSuggester fetches the usage of the current
+command and show it in the `ResultDisplay`. This usage message is distinguished from error messages
+by prepending a line prefixed `[Autosuggestion]` above the usage message displayed.
+
+===== Design considerations
+.Aspect: How to select the closest match to commands
+We notice this is the well researched
+http://www.dcc.uchile.cl/~gnavarro/ps/deb01.pdf[Approximate String Matching] problem
+and has complicated ways to implement.
+
+* *Alternative 1*: Use the algorithm implemented in
+https://github.com/junegunn/fzf[FZF], the fuzzy file finder.
+
+** Pros: Very user friendly. especially for longer commands.
+    Suitable for history searching when paired with
+    Mozilla's https://developer.mozilla.org/en-US/docs/Mozilla/Tech/Places/Frecency_algorithm[Frecency algorithm].
+** Cons: Needs time to understand and implement.
+
+* *Alternative 2: (currently implemented)*
+Simple edit distance using a memoized dynamic programming approach.
+
+** Pros: Easier to implement. Merely 10 lines with memoization.
+** Cons: Takes `O(nm)` time to compare two strings, which means approximately `O(n^2)`
+    time to create a priority queue of nearest commands.
+
+.To be implemented in `v2.0`: parsing the command in real time and suggest possible choices
+for each for every argument.
+
+* *Possible implementation*: Initialize prefix objects with a list of possible `String` of values
+    given that prefix, which can be displayed in autosuggestion.
+
+==== AutoExpenses
+===== Implementation
 AutoExpenses will create expenses automatically once created. This update is done during
 every startup, when model manager is being initialized.
 
@@ -246,7 +295,7 @@ The following activity diagram summarizes what happens when user creates a new A
 
 image::AutoExpenseCreationActivityDiagram.png[]
 
-==== Design Considerations
+===== Design Considerations
 .Aspect: How to encode the recurring nature of AutoExpense
 * *Alternative 1*: Embrace the good practice of immutable objects and
     create a new AutoExpense object every time a new Expense is generated
@@ -504,14 +553,14 @@ Use Case: user adds an expense
 
 === Use Case 07: Add a recurring expenditure
 
-. User keys in command setAutoExpenditure, followed by the frequency he would want the expenditure to be, the description and amount of the expenditure.
+. User keys in command `addAutoExp`, followed by the frequency he would want the expenditure to be, the description and amount of the expenditure.
 . GuiltTrip creates an auto-expense entry.
 . GuiltTrip informs user that the auto-expense have been created.
 
 === Use Case 08: List recurring expenditures
 
-. The user types listAutoExpenditure.
-. GuiltTrip lists all the current automatically recurring expenditures.
+. The user types `toggle autoexpense`.
+. GuiltTrip toggles the panel that lists all the current automatically recurring expenditures.
 
 === Use Case 09: Set GeneralReminder
 
