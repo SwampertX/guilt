@@ -233,6 +233,15 @@ AutoSuggester is one of the most visible and widely used UX feature in the Guilt
 It grabs users' input from the command box using a listener,
 and returns suggetions using a `CommandSuggester` 's `suggest()` method, displayed in the `ResultDisplay` panel.
 
+image::AutoSuggestClassDiagram.png[]
+Figure: Class Diagram for AutoSuggest.
+
+[NOTE]
+Terminology: `AutoSuggest` refers to the feature as a whole.
+`AutoSuggestion` is the term users see in GuiltTrip application.
+`CommandSuggester` is the functional interface in the source code.
+`GuiltTripCommandSuggester` is the class that gives suggestions based on user input.
+
 Currently AutoSuggester carries out two functions:
 
 1. suggesting full commands when halfway typing any command
