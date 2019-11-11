@@ -293,7 +293,7 @@ attribute to match the latest `Expense` in the list returned.
 
 The following activity diagram summarizes what happens when user creates a new AutoExpense:
 
-image::AutoExpenseCreationActivityDiagram.png[]
+image::AutoExpenseActivityDiagram.png[]
 
 ===== Design Considerations
 .Aspect: How to encode the recurring nature of AutoExpense
