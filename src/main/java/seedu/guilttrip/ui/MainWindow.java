@@ -27,12 +27,15 @@ import seedu.guilttrip.logic.commands.CommandResult;
 import seedu.guilttrip.logic.commands.GuiltTripCommandSuggester;
 import seedu.guilttrip.logic.commands.exceptions.CommandException;
 import seedu.guilttrip.logic.parser.exceptions.ParseException;
+import seedu.guilttrip.model.reminders.Reminder;
+import seedu.guilttrip.model.reminders.messages.Message;
 import seedu.guilttrip.ui.autoexpense.AutoExpensesPanel;
 import seedu.guilttrip.ui.budget.BudgetPanel;
 import seedu.guilttrip.ui.condition.ConditionPanel;
 import seedu.guilttrip.ui.entry.EntryListPanel;
 import seedu.guilttrip.ui.expense.ExpenseListPanel;
 import seedu.guilttrip.ui.income.IncomeListPanel;
+import seedu.guilttrip.ui.reminder.NotificationPanel;
 import seedu.guilttrip.ui.reminder.ReminderPanel;
 import seedu.guilttrip.ui.stats.StatisticsBarChart;
 import seedu.guilttrip.ui.stats.StatisticsPieChartPanel;
@@ -62,6 +65,7 @@ public class MainWindow extends UiPart<Stage> {
     private IncomeListPanel incomeListPanel;
     private ReminderPanel reminderPanel;
     private BudgetPanel budgetPanel;
+    private NotificationPanel notificationPanel;
     private WishListPanel wishListPanel;
     private AutoExpensesPanel autoExpensesPanel;
     private ResultDisplay resultDisplay;
@@ -201,7 +205,8 @@ public class MainWindow extends UiPart<Stage> {
         budgetsPlaceHolder.getChildren().add(this.budgetPanel.getRoot());
 
         this.reminderPanel = new ReminderPanel(logic.getFilteredReminders());
-        remindersPlaceHolder.getChildren().add(this.reminderPanel.getRoot());
+        this.notificationPanel = new NotificationPanel(logic.getFilteredNotifications());
+        remindersPlaceHolder.getChildren().add(notificationPanel.getRoot());
 
         this.autoExpensesPanel = new AutoExpensesPanel(logic.getFilteredAutoExpenseList());
         autoExpensesPlaceHolder.getChildren().add(this.autoExpensesPanel.getRoot());
@@ -303,8 +308,9 @@ public class MainWindow extends UiPart<Stage> {
             }
             togglePlaceHolder(budgetsPlaceHolder);
             break;
+
         case REMINDER:
-            if (mainPanel.getChildren().contains(reminderPanel.getRoot())) {
+            if (mainPanel.getChildren().contains(notificationPanel.getRoot())) {
                 throw new CommandException("The panel you want to toggle is already shown in the main panel!");
             }
             togglePlaceHolder(remindersPlaceHolder);
@@ -319,7 +325,7 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Replaces the Reminder Panel with the Conditions Panel.
+     * Replaces the GeneralReminder Panel with the Conditions Panel.
      */
     private void showConditionPanel() {
         remindersPlaceHolder.getChildren().clear();
@@ -329,13 +335,20 @@ public class MainWindow extends UiPart<Stage> {
     }
 
     /**
-     * Replaces the Conditions Panel with the Reminder Panel.
+     * Replaces the Conditions Panel with the GeneralReminder Panel.
      */
     private void showReminderPanel() {
         remindersPlaceHolder.getChildren().clear();
         remindersPlaceHolder.getChildren().add(new Label("Reminders"));
-        ReminderPanel reminderPanel = new ReminderPanel(logic.getFilteredReminders());
-        remindersPlaceHolder.getChildren().add(reminderPanel.getRoot());
+        NotificationPanel notificationPanel = new NotificationPanel(logic.getFilteredNotifications());
+        remindersPlaceHolder.getChildren().add(notificationPanel.getRoot());
+    }
+
+    /**
+     * Replaces the old selected reminder with a new one.
+     */
+    public void updateReminderSelected(Reminder reminder) {
+        reminderPanel.updateReminderSelected(reminder);
     }
 
     /**
@@ -489,7 +502,7 @@ public class MainWindow extends UiPart<Stage> {
             togglePlaceHolder(autoExpensesPlaceHolder);
         }
 
-        if (!remindersPlaceHolder.getChildren().contains(reminderPanel.getRoot())) {
+        if (!remindersPlaceHolder.getChildren().contains(notificationPanel.getRoot())) {
             remindersPlaceHolder.getChildren().add(reminderPanel.getRoot());
             togglePlaceHolder(remindersPlaceHolder);
         }
@@ -514,6 +527,19 @@ public class MainWindow extends UiPart<Stage> {
 
     public EntryListPanel getEntryListPanel() {
         return entryListPanel;
+    }
+
+
+    /**
+     * Display generalReminder popup.
+     * @param message
+     */
+    public void displayPopUp(Message message) {
+        Stage newStage = new Stage();
+
+        Scene stageScene = new Scene(message.render(), 300, 300);
+        newStage.setScene(stageScene);
+        newStage.show();
     }
 
     /**
@@ -614,10 +640,8 @@ public class MainWindow extends UiPart<Stage> {
                     if (remindersPlaceHolder.isVisible() && remindersPlaceHolder.isManaged()) {
                         togglePlaceHolder(remindersPlaceHolder);
                     }
-                    mainPanel.getChildren().removeAll(mainPanel.getChildren());
+                    mainPanel.getChildren().clear();
                     mainPanel.getChildren().add(this.reminderPanel.getRoot());
-
-                    showReminderPopup();
                     break;
                 default:
                     // Do nothing.
@@ -627,6 +651,10 @@ public class MainWindow extends UiPart<Stage> {
             if (commandResult.isChangeTheme()) {
                 Theme themeToChangeTo = commandResult.getNewTheme();
                 switchThemeTo(themeToChangeTo);
+            }
+
+            if (commandResult.toDisplayPopUp()) {
+                displayPopUp(commandResult.getMessage());
             }
 
             return commandResult;

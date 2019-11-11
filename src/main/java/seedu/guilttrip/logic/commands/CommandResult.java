@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import seedu.guilttrip.model.reminders.messages.Message;
 import seedu.guilttrip.ui.util.FontName;
 import seedu.guilttrip.ui.util.PanelName;
 import seedu.guilttrip.ui.util.Theme;
@@ -45,6 +46,10 @@ public class CommandResult {
     private final String toList;
     private final boolean isList;
 
+    /** For displaying generalReminder popup */
+    private final boolean displayPopUp;
+    private final Message message;
+
     /**
      * Constructs a {@code CommandResult} with the specified fields.
      */
@@ -65,6 +70,8 @@ public class CommandResult {
         this.toList = null;
         this.changeTheme = false;
         this.newTheme = null;
+        this.displayPopUp = false;
+        this.message = null;
     }
 
     /**
@@ -92,6 +99,8 @@ public class CommandResult {
         this.isList = false;
         this.changeTheme = false;
         this.newTheme = null;
+        this.displayPopUp = false;
+        this.message = null;
     }
 
 
@@ -113,6 +122,8 @@ public class CommandResult {
         this.toggleEntryPanel = false;
         this.changeTheme = false;
         this.newTheme = null;
+        this.displayPopUp = false;
+        this.message = null;
         this.isList = isList;
         this.toList = toList;
     }
@@ -137,6 +148,8 @@ public class CommandResult {
         this.isList = false;
         this.changeTheme = false;
         this.newTheme = null;
+        this.displayPopUp = false;
+        this.message = null;
     }
 
     /**
@@ -157,6 +170,8 @@ public class CommandResult {
         this.togglePieChart = false;
         this.toggleBarChart = false;
         this.toggleEntryPanel = false;
+        this.displayPopUp = false;
+        this.message = null;
         this.toList = null;
         this.isList = false;
     }
@@ -179,6 +194,29 @@ public class CommandResult {
         this.togglePieChart = false;
         this.toggleBarChart = false;
         this.toggleEntryPanel = false;
+        this.displayPopUp = false;
+        this.message = null;
+        this.toList = null;
+        this.isList = false;
+    }
+
+    public CommandResult(String feedbackToUser, Message message) {
+        this.feedbackToUser = feedbackToUser;
+        this.changeTheme = false;
+        this.newTheme = null;
+        this.showHelp = false;
+        this.exit = false;
+        this.panelName = null;
+        this.togglePanel = false;
+        this.toggleStats = false;
+        this.fontName = null;
+        this.listFonts = false;
+        this.changeFont = false;
+        this.togglePieChart = false;
+        this.toggleBarChart = false;
+        this.toggleEntryPanel = false;
+        this.displayPopUp = true;
+        this.message = message;
         this.toList = null;
         this.isList = false;
     }
@@ -253,6 +291,14 @@ public class CommandResult {
 
     public boolean isList() {
         return isList;
+    }
+
+    public boolean toDisplayPopUp() {
+        return displayPopUp;
+    }
+
+    public Message getMessage() {
+        return this.message;
     }
 
     @Override
